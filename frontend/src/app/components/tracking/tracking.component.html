@@ -1,0 +1,118 @@
+<div class="tracking-container">
+  <h2>Registrar Nuevo Paquete</h2>
+  <div *ngIf="message" [class]="messageType" class="message">
+    {{ message }}
+  </div>
+  <form [formGroup]="formPaquete" (ngSubmit)="onSubmit()" class="paquete-form">
+    <div class="form-group">
+      <label for="codigoGuia">Código de Guía *</label>
+      <input type="text" id="codigoGuia" formControlName="codigoGuia"
+        [class.error]="formPaquete.get('codigoGuia')?.invalid && formPaquete.get('codigoGuia')?.touched" />
+      <div class="error-message"
+        *ngIf="formPaquete.get('codigoGuia')?.invalid && formPaquete.get('codigoGuia')?.touched">
+        Código de guía es requerido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="destinatario">Destinatario *</label>
+      <input type="text" id="destinatario" formControlName="destinatario"
+        [class.error]="formPaquete.get('destinatario')?.invalid && formPaquete.get('destinatario')?.touched" />
+      <div class="error-message"
+        *ngIf="formPaquete.get('destinatario')?.invalid && formPaquete.get('destinatario')?.touched">
+        Destinatario es requerido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="ciudadDestino">Ciudad Destino *</label>
+      <input type="text" id="ciudadDestino" formControlName="ciudadDestino"
+        [class.error]="formPaquete.get('ciudadDestino')?.invalid && formPaquete.get('ciudadDestino')?.touched" />
+      <div class="error-message"
+        *ngIf="formPaquete.get('ciudadDestino')?.invalid && formPaquete.get('ciudadDestino')?.touched">
+        Ciudad destino es requerida
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="pesoKg">Peso (kg) *</label>
+      <input type="number" id="pesoKg" formControlName="pesoKg" step="0.01" min="0.01"
+        [class.error]="formPaquete.get('pesoKg')?.invalid && formPaquete.get('pesoKg')?.touched" />
+      <div class="error-message" *ngIf="formPaquete.get('pesoKg')?.invalid && formPaquete.get('pesoKg')?.touched">
+        Peso debe ser mayor a 0
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="estado">Estado *</label>
+      <select id="estado" formControlName="estado"
+        [class.error]="formPaquete.get('estado')?.invalid && formPaquete.get('estado')?.touched">
+        <option value="">Seleccionar estado</option>
+        <option value="REGISTRADO">REGISTRADO</option>
+        <option value="EN_TRANSITO">EN TRANSITO</option>
+        <option value="ENTREGADO">ENTREGADO</option>
+        <option value="DEVUELTO">DEVUELTO</option>
+      </select>
+      <div class="error-message" *ngIf="formPaquete.get('estado')?.invalid && formPaquete.get('estado')?.touched">
+        Estado es requerido
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="formPaquete.invalid || isLoading" class="btn-submit">
+      {{ isLoading ? 'Guardando...' : 'Registrar Paquete' }}
+    </button>
+  </form>
+
+  <!-- Tabla de paquetes -->
+  <div class="table-section">
+    <h2>Lista de Paquetes</h2>
+    <div class="filter-controls">
+      <label for="estadoFilter">Filtrar por estado:</label>
+      <select id="estadoFilter" (change)="onEstadoChange($event)">
+        <option value="">Todos los estados</option>
+        <option value="REGISTRADO">REGISTRADO</option>
+        <option value="EN_TRANSITO">EN TRANSITO</option>
+        <option value="ENTREGADO">ENTREGADO</option>
+        <option value="DEVUELTO">DEVUELTO</option>
+      </select>
+    </div>
+
+    <table class="paquetes-table">
+      <thead>
+        <tr>
+          <th>Código de Guía</th>
+          <th>Destinatario</th>
+          <th>Ciudad Destino</th>
+          <th>Peso (kg)</th>
+          <th>Estado</th>
+          <th>Fecha Creación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let paquete of paquetes">
+          <td>{{ paquete.codigoGuia }}</td>
+          <td>{{ paquete.destinatario }}</td>
+          <td>{{ paquete.ciudadDestino }}</td>
+          <td>{{ paquete.pesoKg | number:'1.2-2' }}</td>
+          <td>{{ paquete.estado }}</td>
+          <td>{{ paquete.creadoEn | date:'short' }}</td>
+          <td>
+            <select [(ngModel)]="paquete.estado" (change)="onEstadoUpdate(paquete)"
+              [disabled]="updatingStates[paquete.id]">
+              <option value="REGISTRADO">REGISTRADO</option>
+              <option value="EN_TRANSITO">EN TRANSITO</option>
+              <option value="ENTREGADO">ENTREGADO</option>
+              <option value="DEVUELTO">DEVUELTO</option>
+            </select>
+            <span *ngIf="updatingStates[paquete.id]" class="loading-text">Actualizando...</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="loadingTable" class="loading">
+      Cargando paquetes...
+    </div>
+  </div>
+</div>
