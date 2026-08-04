@@ -31,7 +31,7 @@ Mini-módulo interno para que un operador registre y dé seguimiento al estado d
     ```bash
    pnpm install
 3. Configurar variables de entorno:
-Copiar `sample.env` a `.env`
+Copiar `ejemplo.env` a `.env`
 Configurar credenciales de PostgreSQL
 Asegurarse de tener la base de datos zoom_tracker creada.
 
